@@ -2,55 +2,54 @@ name: Obfuscate and Commit
 
 on:
   push:
-    branches: [main]  # 当推送到 main 分支时触发工作流
-  workflow_dispatch:  # 允许手动触发工作流
+    branches: [main]
+  workflow_dispatch:
 
 jobs:
   obfuscate:
-    runs-on: ubuntu-latest  # 在最新的 Ubuntu 环境中运行
+    runs-on: ubuntu-latest
     permissions:
-      contents: write  # 允许写入 GitHub 仓库内容
+      contents: write
 
     steps:
-      - uses: actions/checkout@v3  # 检出代码库
+      - uses: actions/checkout@v3
         with:
-          fetch-depth: 0  # 获取所有历史记录，以便进行提交
+          fetch-depth: 0
 
       - name: Use Node.js
-        uses: actions/setup-node@v3  # 设置 Node.js 环境
+        uses: actions/setup-node@v3
         with:
-          node-version: "16"  # 使用 Node.js 版本 16
+          node-version: "16"
 
       - name: Install dependencies
-        run: npm install -g javascript-obfuscator  # 全局安装 JavaScript 混淆器
+        run: npm install -g javascript-obfuscator
 
       - name: Obfuscate code
         run: |
           # 使用 javascript-obfuscator 对代码进行混淆
           javascript-obfuscator src/worker.js --output obfuscate_worker.js \
-          --compact true \  # 压缩输出
-          --control-flow-flattening true \  # 控制流扁平化
-          --control-flow-flattening-threshold 1 \  # 控制流扁平化阈值
-          --dead-code-injection true \  # 注入无效代码
-          --dead-code-injection-threshold 1 \  # 无效代码注入阈值
-          --identifier-names-generator hexadecimal \  # 使用十六进制生成标识符名称
-          --rename-globals true \  # 重命名全局变量
-          --string-array true \  # 使用字符串数组
-          --string-array-encoding 'rc4' \  # 字符串数组编码方式
-          --string-array-threshold 1 \  # 字符串数组阈值
-          --transform-object-keys true \  # 转换对象键
-          --unicode-escape-sequence true  # 使用 Unicode 转义序列
+          --compact true \
+          --control-flow-flattening true \
+          --control-flow-flattening-threshold 1 \
+          --dead-code-injection true \
+          --dead-code-injection-threshold 1 \
+          --identifier-names-generator hexadecimal \
+          --rename-globals true \
+          --string-array true \
+          --string-array-encoding 'rc4' \
+          --string-array-threshold 1 \
+          --transform-object-keys true \
+          --unicode-escape-sequence true
 
       - name: Commit changes
         run: |
-          # 配置 Git 用户信息
           git config --local user.email "github-actions[bot]@users.noreply.github.com"
           git config --local user.name "github-actions[bot]"
-          git add -f obfuscate_worker.js  # 强制添加被忽略的文件
-          git commit -m "Obfuscate worker.js" || echo "No changes to commit"  # 提交更改，若没有更改则输出提示
+          git add -f obfuscate_worker.js
+          git commit -m "Obfuscate worker.js" || echo "No changes to commit"
 
       - name: Push changes
-        uses: ad-m/github-push-action@master  # 使用 GitHub Push Action 推送更改
+        uses: ad-m/github-push-action@master
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}  # 使用 GitHub 提供的 Token
-          branch: ${{ github.ref }}  # 推送到当前分支
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          branch: ${{ github.ref }}
