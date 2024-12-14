@@ -39,7 +39,7 @@ jobs:
 
       - name: Obfuscate code
         run: |
-          javascript-obfuscator dist/worker.js --output ../obfuscate_worker.js \
+          javascript-obfuscator dist/worker.js --output obfuscate_worker.js \
           --compact true \
           --control-flow-flattening true \
           --control-flow-flattening-threshold 1 \
@@ -54,13 +54,13 @@ jobs:
           --unicode-escape-sequence true || { echo "混淆失败"; exit 1; }
 
       - name: Check obfuscated file
-        run: ls -l ../obfuscate_worker.js  # 检查混淆后的文件是否存在
+        run: ls -l obfuscate_worker.js  # 检查混淆后的文件是否存在
 
       - name: Commit changes
         run: |
           git config --local user.email "github-actions[bot]@users.noreply.github.com"
           git config --local user.name "github-actions[bot]"
-          git add -f ../obfuscate_worker.js  # 强制添加混淆后的文件
+          git add -f obfuscate_worker.js  # 添加混淆后的文件
           git commit -m "Obfuscate obfuscate_worker.js" || echo "没有更改需要提交"
 
       - name: Push changes
