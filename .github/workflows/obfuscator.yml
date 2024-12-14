@@ -16,6 +16,9 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: List files
+        run: ls -R  # 列出当前目录及其子目录中的文件
+
       - name: Use Node.js
         uses: actions/setup-node@v3
         with:
@@ -39,14 +42,14 @@ jobs:
           --string-array-encoding 'rc4' \
           --string-array-threshold 1 \
           --transform-object-keys true \
-          --unicode-escape-sequence true
+          --unicode-escape-sequence true || { echo "混淆失败"; exit 1; }
 
       - name: Commit changes
         run: |
           git config --local user.email "github-actions[bot]@users.noreply.github.com"
           git config --local user.name "github-actions[bot]"
-          git add _worker.js
-          git commit -m "Obfuscate _worker.js" || echo "No changes to commit"
+          git add obfuscate_worker.js
+          git commit -m "Obfuscate obfuscate_worker.js" || echo "没有更改需要提交"
 
       - name: Push changes
         uses: ad-m/github-push-action@master
