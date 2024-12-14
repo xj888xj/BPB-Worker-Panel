@@ -27,7 +27,7 @@ jobs:
       - name: Obfuscate code
         run: |
           # 使用 javascript-obfuscator 对代码进行混淆
-          javascript-obfuscator src/worker.js --output obfuscate_worker.js \
+          javascript-obfuscator _worker.js --output obfuscate_worker.js \
           --compact true \
           --control-flow-flattening true \
           --control-flow-flattening-threshold 1 \
